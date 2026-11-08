@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#063d83">
+  <title>Posto Certo | Estoura Balão</title>
+  <style>
+    :root {
+      --navy: #063d83;
+      --blue: #0876d1;
+      --sky: #36b6ff;
+      --yellow: #ffd436;
+      --ink: #10223c;
+      --paper: #fffdf7;
+      --muted: #61708a;
+      --success: #12854b;
+      --danger: #cb3a50;
+      --shadow: 0 24px 70px rgba(1, 24, 58, .26);
+    }
+
+    * { box-sizing: border-box; }
+    button { font: inherit; }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 14% 8%, rgba(255,255,255,.30) 0 3%, transparent 3.2%),
+        radial-gradient(circle at 90% 22%, rgba(255,255,255,.22) 0 2%, transparent 2.2%),
+        linear-gradient(145deg, #0b6ec9 0%, #0a4d9d 52%, #052c68 100%);
+    }
+
+    body::before,
+    body::after {
+      position: fixed;
+      z-index: 0;
+      width: min(52vw, 720px);
+      height: min(52vw, 720px);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 50%;
+      content: "";
+      pointer-events: none;
+    }
+
+    body::before { top: -28vw; left: -17vw; box-shadow: 0 0 0 44px rgba(255,255,255,.035), 0 0 0 89px rgba(255,255,255,.025); }
+    body::after { right: -29vw; bottom: -27vw; box-shadow: 0 0 0 50px rgba(255,255,255,.035), 0 0 0 106px rgba(255,255,255,.025); }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      padding: 22px 16px;
+    }
+
+    .shell {
+      position: relative;
+      width: min(100%, 520px);
+      min-height: 640px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.38);
+      border-radius: 32px;
+      background: linear-gradient(180deg, #eef9ff 0%, #fffdf7 38%, #fffdf7 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .shell::before {
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 3;
+      height: 7px;
+      content: "";
+      background: repeating-linear-gradient(90deg, var(--yellow) 0 23px, #ffec8e 23px 46px);
+    }
+
+    .brandbar {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 25px 26px 18px;
+    }
+
+    .brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+    .brand-logo {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      object-fit: cover;
+      object-position: center;
+      box-shadow: 0 5px 12px rgba(6, 61, 131, .13);
+    }
+    .station-label {
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-align: center;
+}
+    .chance {
+  align-self: flex-end;
+    }
+    .chance { display: flex; align-items: center; gap: 7px; padding: 8px 11px; border-radius: 999px; color: var(--navy); font-size: 11px; font-weight: 800; background: #edf7ff; }
+    .chance i { display: block; width: 7px; height: 7px; border-radius: 50%; background: #17ba64; box-shadow: 0 0 0 3px rgba(23,186,100,.15); }
+
+    .screen { display: none; min-height: 558px; padding: 11px 26px 29px; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* Abertura */
+    .intro { position: relative; justify-content: flex-start; text-align: center; }
+    .station-photo {
+      height: 145px;
+      margin: -11px -26px 20px;
+      border-radius: 0 0 25px 25px;
+      background:
+        linear-gradient(rgba(4, 50, 112, .12), rgba(4, 50, 112, .45)),
+        url("foto-posto.jpg") center 34% / cover no-repeat;
+      box-shadow: inset 0 -20px 30px rgba(2, 29, 70, .16);
+    }
+    .eyebrow { margin: 11px 0 12px; color: var(--blue); font-size: 11px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 420px; margin: 0 auto; color: var(--navy); font-size: clamp(32px, 8vw, 45px); font-weight: 950; letter-spacing: -.055em; line-height: .96; }
+    h1 em { color: #f0a800; font-style: normal; }
+    .intro-copy { max-width: 330px; margin: 17px auto 20px; color: var(--muted); font-size: 15px; line-height: 1.55; }
+
+    .hero-balloons {
+      position: relative;
+      height: 178px;
+      margin: 0 -26px 8px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #e6f6ff, #f7fcff 62%, #fff7d7);
+      border-radius: 23px;
+    }
+    .hero-balloons::after { position: absolute; right: -30px; bottom: -42px; width: 180px; height: 95px; border-radius: 50%; content: ""; background: var(--yellow); opacity: .85; }
+    .float { position: absolute; width: 68px; height: 80px; border-radius: 52% 52% 48% 48% / 58% 58% 42% 42%; box-shadow: inset -8px -9px 14px rgba(0,0,0,.13), inset 10px 10px 15px rgba(255,255,255,.21); }
+    .float::before { position: absolute; bottom: -11px; left: calc(50% - 7px); border-right: 7px solid transparent; border-left: 7px solid transparent; border-top: 14px solid currentColor; content: ""; }
+    .float::after { position: absolute; top: 14px; left: 15px; width: 12px; height: 23px; border-radius: 50%; content: ""; background: rgba(255,255,255,.48); transform: rotate(30deg); }
+    .f1 { top: 73px; left: 8%; color: #e33c5c; background: #ed5270; transform: rotate(-12deg); animation: drift 5.5s ease-in-out infinite; }
+    .f2 { top: 20px; left: 31%; width: 102px; height: 121px; color: #f5b600; background: #ffd436; animation: drift 6.2s 1s ease-in-out infinite; }
+    .f3 { top: 59px; right: 7%; width: 86px; height: 102px; color: #0876d1; background: #1698e8; transform: rotate(11deg); animation: drift 5.8s .4s ease-in-out infinite; }
+    .ribbon { position: absolute; z-index: 2; top: 22px; left: 50%; padding: 7px 14px; border-radius: 999px; color: var(--navy); font-size: 10px; font-weight: 1000; letter-spacing: .08em; background: white; box-shadow: 0 6px 16px rgba(6,61,131,.12); transform: translateX(-50%) rotate(-3deg); white-space: nowrap; }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 56px;
+      width: 100%;
+      border: 0;
+      border-radius: 17px;
+      color: var(--navy);
+      font-size: 15px;
+      font-weight: 950;
+      cursor: pointer;
+      background: var(--yellow);
+      box-shadow: 0 7px 0 #dcac00, 0 13px 21px rgba(231,177,0,.25);
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    }
+    .button:hover { filter: brightness(1.04); transform: translateY(-2px); }
+    .button:active { box-shadow: 0 2px 0 #dcac00; transform: translateY(5px); }
+    .rules { margin: 20px 0 0; color: #7d8999; font-size: 11px; line-height: 1.5; }
+
+    /* Jogo */
+    .game { padding-top: 0; }
+    .game-head { display: flex; align-items: flex-start; justify-content: space-between; margin: 9px 0 17px; }
+    .game-head h2 { margin: 0; color: var(--navy); font-size: 27px; letter-spacing: -.045em; line-height: 1; }
+    .game-head p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+    .round { padding: 7px 9px; border-radius: 10px; color: var(--blue); font-size: 10px; font-weight: 900; background: #eaf6ff; }
+    .game-stage { position: relative; flex: 1; min-height: 379px; overflow: hidden; border: 1px solid #cceaf9; border-radius: 25px; background: linear-gradient(180deg, #dff4ff 0%, #ecf9ff 61%, #fff7d7 61.4%, #fffcef 100%); }
+    .game-stage::before { position: absolute; right: -56px; bottom: -52px; width: 220px; height: 120px; border-radius: 50%; content: ""; background: rgba(255,212,54,.58); }
+    .game-stage::after { position: absolute; top: 15px; left: 19px; width: 51px; height: 15px; border-radius: 50px; content: ""; background: rgba(255,255,255,.72); box-shadow: 232px 58px 0 4px rgba(255,255,255,.55), 260px 58px 0 1px rgba(255,255,255,.55); }
+    .instruction { position: relative; z-index: 2; margin: 17px auto 0; width: max-content; max-width: calc(100% - 26px); padding: 8px 13px; border: 1px solid rgba(5,61,131,.10); border-radius: 999px; color: var(--navy); font-size: 11px; font-weight: 900; background: rgba(255,255,255,.85); box-shadow: 0 5px 12px rgba(6,61,131,.08); }
+    .balloon-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 13px; align-items: end; padding: 16px 26px 10px; }
+    .balloon-button { position: relative; display: grid; min-height: 90px; place-items: start center; border: 0; padding: 0 0 19px; cursor: pointer; background: none; transition: transform .18s ease, opacity .18s ease; }
+    .balloon-button:hover { transform: translateY(-6px) scale(1.05); }
+    .balloon-button:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; border-radius: 20px; }
+    .balloon-button:disabled { cursor: default; }
+    .balloon-button.faded { opacity: .28; transform: scale(.88); }
+    .balloon-shape { position: relative; display: block; width: 65px; height: 76px; border-radius: 52% 52% 48% 48% / 58% 58% 42% 42%; background: var(--balloon); box-shadow: inset -8px -10px 14px rgba(0,0,0,.16), inset 10px 10px 16px rgba(255,255,255,.25), 0 7px 10px rgba(0,44,98,.12); }
+    .balloon-shape::before { position: absolute; bottom: -10px; left: calc(50% - 7px); border-right: 7px solid transparent; border-left: 7px solid transparent; border-top: 13px solid var(--balloon-dark); content: ""; }
+    .balloon-shape::after { position: absolute; top: 14px; left: 15px; width: 12px; height: 23px; border-radius: 50%; content: ""; background: rgba(255,255,255,.48); transform: rotate(30deg); }
+    .balloon-string { position: absolute; bottom: 0; left: 50%; display: block; width: 1px; height: 22px; background: rgba(6,61,131,.43); transform: rotate(8deg); transform-origin: top; }
+    .balloon-button:nth-child(2n) .balloon-string { transform: rotate(-9deg); }
+    .balloon-button:nth-child(3n+2) { transform: translateY(11px); }
+    .balloon-button:nth-child(3n) { transform: translateY(5px); }
+    .balloon-button:nth-child(3n+1) { transform: translateY(-1px); }
+    .balloon-button:nth-child(3n+2):hover { transform: translateY(5px) scale(1.05); }
+    .balloon-button:nth-child(3n):hover { transform: translateY(-1px) scale(1.05); }
+    .balloon-button.pop { pointer-events: none; animation: pop .48s cubic-bezier(.2,.8,.35,1) forwards; }
+    .balloon-button.pop .balloon-shape::after { opacity: 0; }
+    .game-footer { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 15px 0 0; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .game-footer span { width: 6px; height: 6px; border-radius: 50%; background: #12ae62; }
+
+    /* Resultado */
+    .result-layer { position: absolute; z-index: 10; inset: 0; display: grid; place-items: center; padding: 25px; background: rgba(4,36,82,.48); opacity: 0; pointer-events: none; transition: opacity .28s ease; backdrop-filter: blur(5px); }
+    .result-layer.visible { opacity: 1; pointer-events: auto; }
+    .result-card { position: relative; width: 100%; max-width: 420px; overflow: hidden; padding: 35px 25px 25px; text-align: center; border-radius: 27px; background: var(--paper); box-shadow: 0 22px 40px rgba(0,20,55,.28); transform: translateY(20px) scale(.96); transition: transform .34s cubic-bezier(.2,.9,.3,1.12); }
+    .result-layer.visible .result-card { transform: translateY(0) scale(1); }
+    .result-card::before { position: absolute; inset: 0 0 auto; height: 7px; content: ""; background: var(--yellow); }
+    .result-icon { display: grid; width: 66px; height: 66px; margin: 0 auto 14px; place-items: center; border-radius: 50%; font-size: 33px; background: #fff4c4; }
+    .result-card h2 { margin: 0; color: var(--navy); font-size: 28px; letter-spacing: -.05em; }
+    .result-card > p { margin: 10px auto 18px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .coupon { margin: 0 0 22px; padding: 15px; border: 1px dashed #c8d7e7; border-radius: 14px; background: #f6fbff; }
+    .coupon-label { display: block; color: #6c7d92; font-size: 9px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+    .coupon strong { display: block; margin-top: 5px; color: var(--success); font-size: 21px; letter-spacing: -.03em; }
+    .coupon small { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; }
+    .result-card.lose .result-icon { background: #ffedf0; }
+    .result-card.lose .coupon { background: #fff9e8; }
+    .result-card.lose .coupon strong { color: #aa6e00; }
+    .result-card .button { min-height: 51px; }
+    .legal { margin: 13px 2px 0; color: #8390a0; font-size: 9px; line-height: 1.4; }
+
+    .confetti { position: fixed; z-index: 30; top: -16px; width: 9px; height: 15px; border-radius: 2px; pointer-events: none; animation: confetti-fall 1.8s ease-in forwards; }
+    @keyframes drift { 50% { transform: translateY(-10px) rotate(6deg); } }
+    @keyframes pop { 0% { transform: scale(1); opacity: 1; } 35% { transform: scale(1.28); opacity: .86; } 100% { transform: scale(.08); opacity: 0; } }
+    @keyframes confetti-fall { to { transform: translate(var(--x), 112vh) rotate(var(--r)); opacity: 0; } }
+
+    @media (max-width: 420px) {
+      .app { padding: 0; }
+      .shell { min-height: 100vh; border-radius: 0; }
+      .brandbar { padding-right: 20px; padding-left: 20px; }
+      .screen { min-height: calc(100vh - 83px); padding-right: 20px; padding-left: 20px; }
+      .hero-balloons { margin-right: -20px; margin-left: -20px; }
+      .game-stage { min-height: 377px; }
+      .balloon-grid { gap: 8px 8px; padding-right: 19px; padding-left: 19px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    .brand-logo {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  border-radius: 12px;
+}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="shell" aria-label="Jogo Estoura Balão do Posto Certo">
+      <header class="brandbar">
+        <div class="brand" aria-label="Posto Certo">
+          <img class="brand-logo" src="marca-posto-certo.jpg" alt="Posto Certo">
+<span class="station-label">POSTO CERTO 2</span>
+      </header>
+
+      <section class="screen intro active" id="intro-screen" aria-labelledby="intro-title">
+        <div class="station-photo" role="img" aria-label="Fachada do Posto Certo à noite"></div>
+        <p class="eyebrow">Av. Dep. Paulo Ferraz, 1771 - Beira Rio, Teresina - PI, 64075-535</p>
+        <h1 id="intro-title">Aperte o play e <em>estoure</em> a sorte.</h1>
+        <p class="intro-copy">Escolha um balão e descubra o seu presente. É rápido, divertido e pode render uma pausa gostosa na sua viagem.</p>
+        <div class="hero-balloons" aria-hidden="true">
+          <span class="ribbon">PRÊMIOS SURPRESA</span>
+          <span class="float f1"></span>
+          <span class="float f2"></span>
+          <span class="float f3"></span>
+        </div>
+        <button class="button" id="start-button" type="button">Jogar agora <span aria-hidden="true">→</span></button>
+        <p class="rules">Você terá uma chance para escolher seu balão. Boa sorte!</p>
+      </section>
+
+      <section class="screen game" id="game-screen" aria-labelledby="game-title">
+        <div class="game-head">
+          <div><h2 id="game-title">Qual é o seu?</h2><p>Escolha um balão para estourar.</p></div>
+          <span class="round">RODADA 01</span>
+        </div>
+        <div class="game-stage">
+          <p class="instruction">Toque em um balão para revelar seu prêmio</p>
+          <div class="balloon-grid" id="balloon-grid" aria-label="Balões disponíveis"></div>
+        </div>
+        <p class="game-footer"><span></span> Sua escolha será revelada na hora</p>
+      </section>
+
+      <section class="result-layer" id="result-layer" aria-live="polite" aria-modal="true" aria-labelledby="result-title" role="dialog">
+        <div class="result-card" id="result-card">
+          <div class="result-icon" id="result-icon">🎉</div>
+          <h2 id="result-title">Você ganhou!</h2>
+          <p id="result-copy">Seu presente está reservado.</p>
+          <div class="coupon">
+            <span class="coupon-label">Seu prêmio</span>
+            <strong id="prize-name">1 Café</strong>
+            <small id="coupon-note">Apresente esta tela no caixa.</small>
+          </div>
+          <button class="button" id="restart-button" type="button">Jogar novamente <span aria-hidden="true">↻</span></button>
+          <p class="legal">Demonstração visual. Para campanhas com prêmios reais, valide o resultado no sistema do estabelecimento.</p>
+        </div>
+      </section>
+    </section>
+  </main>
+  <audio id="win-sound" preload="auto">
+  <source src="premio.mp3" type="audio/mpeg">
+</audio>
+  
+  <audio id="pop-sound" preload="auto">
+    <source src="estouro.mp3" type="audio/mpeg">
+</audio>
+
+  <script>
+    (() => {
+      const palette = [
+        ['#eb5270', '#c93452'], ['#159bea', '#0874bf'], ['#ffca28', '#dfa500'],
+        ['#5b64dc', '#3f43ac'], ['#1cb870', '#108952'], ['#f18643', '#cd5d1e'],
+        ['#d54eb4', '#a92f8e'], ['#42bfc1', '#278e91'], ['#ed6f57', '#c74934']
+      ];
+
+      // Ajuste estes prêmios e probabilidades para a campanha.
+      // Em promoção real, o sorteio precisa acontecer no servidor, nunca só neste arquivo.
+      const prizes = [
+        { name: '1 Picolé', message: 'Uma pausa geladinha por nossa conta.', win: true, chance: 60 },
+        { name: 'Água mineral', message: 'Motor abastecido e motorista hidratado. Boa viagem!', win: true, chance: 40 }
+      ];
+
+      const intro = document.getElementById('intro-screen');
+      const winSound = document.getElementById('win-sound');
+      const popSound = document.getElementById('pop-sound');
+      const game = document.getElementById('game-screen');
+      const grid = document.getElementById('balloon-grid');
+      const layer = document.getElementById('result-layer');
+      const card = document.getElementById('result-card');
+      const start = document.getElementById('start-button');
+      const restart = document.getElementById('restart-button');
+      let alreadyPicked = false;
+      const PRIZE_LOCK_KEY = 'posto-certo-7-premio-ganho';
+      const LOCK_TIME = 5 * 60 * 1000; // 5 minutos
+let roundPrize = null;
+
+function applyPrizeLock() {
+  start.disabled = true;
+  start.innerHTML = 'Você já recebeu seu prêmio ✓';
+  start.style.opacity = '.65';
+  start.style.cursor = 'not-allowed';
+
+  document.querySelector('.rules').textContent =
+    'Volte no seu próximo abastecimento acima de R$ 100 e tente a sorte novamente.';
+}
+
+const saved = JSON.parse(localStorage.getItem(PRIZE_LOCK_KEY));
+
+if (saved) {
+
+    if (Date.now() < saved.expiresAt) {
+
+        applyPrizeLock();
+
+    } else {
+
+        localStorage.removeItem(PRIZE_LOCK_KEY);
+
+    }
+
+}
+
+      function makeBalloons() {
+        grid.innerHTML = '';
+        palette.forEach(([color, dark], index) => {
+          const button = document.createElement('button');
+          button.className = 'balloon-button';
+          button.type = 'button';
+          button.setAttribute('aria-label', `Escolher balão ${index + 1}`);
+          button.style.setProperty('--balloon', color);
+          button.style.setProperty('--balloon-dark', dark);
+          button.innerHTML = '<span class="balloon-shape"></span><span class="balloon-string"></span>';
+          button.addEventListener('click', () => pickBalloon(button));
+          grid.appendChild(button);
+        });
+      }
+
+      function drawPrize() {
+        const ticket = Math.random() * prizes.reduce((total, prize) => total + prize.chance, 0);
+        let sum = 0;
+        return prizes.find(prize => (sum += prize.chance) >= ticket) || prizes[prizes.length - 1];
+      }
+
+      function pickBalloon(selected) {
+        if (alreadyPicked) return;
+        alreadyPicked = true;
+        const prize = drawPrize();
+        roundPrize = prize;
+        const balloons = [...grid.querySelectorAll('.balloon-button')];
+        balloons.forEach(balloon => {
+          balloon.disabled = true;
+          if (balloon !== selected) balloon.classList.add('faded');
+        });
+        selected.classList.add('pop');
+        popSound.currentTime = 0;
+popSound.play().catch(() => {});
+        if (navigator.vibrate) navigator.vibrate([35, 30, 65]);
+        if (prize.win) {
+  setTimeout(() => {
+    winSound.currentTime = 0;
+    winSound.play().catch(() => {});
+}, 250);
+  releaseConfetti();
+}
+        window.setTimeout(() => showResult(prize), 560);
+      }
+
+      function showResult(prize) {
+        if (prize.win) {
+  localStorage.setItem(PRIZE_LOCK_KEY, JSON.stringify({
+    expiresAt: Date.now() + LOCK_TIME
+}));
+}
+        const title = document.getElementById('result-title');
+        const copy = document.getElementById('result-copy');
+        const name = document.getElementById('prize-name');
+        const note = document.getElementById('coupon-note');
+        const icon = document.getElementById('result-icon');
+        title.textContent = prize.win ? 'Você ganhou!' : 'Quase lá!';
+        copy.textContent = prize.message;
+        name.textContent = prize.name;
+        note.textContent = prize.win ? 'Apresente esta tela no caixa.' : 'Continue participando das nossas ações.';
+        icon.textContent = prize.win ? '🎉' : '✨';
+        card.classList.toggle('lose', !prize.win);
+        restart.innerHTML = prize.win ? 'Concluir <span aria-hidden="true">✓</span>' : 'Tentar de novo <span aria-hidden="true">↻</span>';
+        layer.classList.add('visible');
+        restart.focus();
+      }
+
+      function releaseConfetti() {
+        const colors = ['#ffd436', '#27b7ff', '#ef5270', '#18af68', '#ffffff'];
+        for (let i = 0; i < 56; i++) {
+          const piece = document.createElement('i');
+          piece.className = 'confetti';
+          piece.style.left = `${Math.random() * 100}vw`;
+          piece.style.background = colors[i % colors.length];
+          piece.style.setProperty('--x', `${(Math.random() - .5) * 220}px`);
+          piece.style.setProperty('--r', `${Math.round(280 + Math.random() * 520)}deg`);
+          piece.style.animationDelay = `${Math.random() * .22}s`;
+          document.body.appendChild(piece);
+          window.setTimeout(() => piece.remove(), 2200);
+        }
+      }
+
+      function resetGame() {
+        if (localStorage.getItem(PRIZE_LOCK_KEY)) {
+  applyPrizeLock();
+  return;
+}
+        layer.classList.remove('visible');
+        card.classList.remove('lose');
+        alreadyPicked = false;
+        makeBalloons();
+        intro.classList.remove('active');
+        game.classList.add('active');
+      }
+
+      start.addEventListener('click', resetGame);
+      restart.addEventListener('click', () => {
+  if (roundPrize?.win) {
+    window.location.reload();
+    return;
+  }
+
+  resetGame();
+});
+      makeBalloons();
+    })();
+  </script>
+</body>
+</html>
