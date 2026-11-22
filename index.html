@@ -19,7 +19,7 @@
       --shadow: 0 24px 70px rgba(1, 24, 58, .26);
     }
 
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; }
     button { font: inherit; }
 
     body {
@@ -88,11 +88,11 @@
     }
 
     .brand {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
     .brand-logo {
       display: block;
       width: 100%;
@@ -103,14 +103,14 @@
       box-shadow: 0 5px 12px rgba(6, 61, 131, .13);
     }
     .station-label {
-  color: var(--navy);
-  font-size: 15px;
-  font-weight: 950;
-  letter-spacing: .14em;
-  text-align: center;
-}
+      color: var(--navy);
+      font-size: 15px;
+      font-weight: 950;
+      letter-spacing: .14em;
+      text-align: center;
+    }
     .chance {
-  align-self: flex-end;
+      align-self: flex-end;
     }
     .chance { display: flex; align-items: center; gap: 7px; padding: 8px 11px; border-radius: 999px; color: var(--navy); font-size: 11px; font-weight: 800; background: #edf7ff; }
     .chance i { display: block; width: 7px; height: 7px; border-radius: 50%; background: #17ba64; box-shadow: 0 0 0 3px rgba(23,186,100,.15); }
@@ -121,12 +121,15 @@
     /* Abertura */
     .intro { position: relative; justify-content: flex-start; text-align: center; }
     .station-photo {
-      min-height: 200px;
-      margin: -11px -26px 20px;
+      margin: 0 0 20px;
+      text-align: center;
+    }
+    .station-photo img {
+      display: inline-block;
+      width: auto;
+      height: auto;
+      max-width: none;
       border-radius: 0 0 25px 25px;
-      background:
-        linear-gradient(rgba(4, 50, 112, .12), rgba(4, 50, 112, .45)),
-        url("foto-posto.jpg") center 34% / auto no-repeat;
       box-shadow: inset 0 -20px 30px rgba(2, 29, 70, .16);
     }
     .eyebrow { margin: 11px 0 12px; color: var(--blue); font-size: 11px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
@@ -241,14 +244,14 @@
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
     .brand-logo {
-  display: block !important;
-  width: 100% !important;
-  height: auto !important;
-  max-height: none !important;
-  object-fit: contain !important;
-  object-position: center !important;
-  border-radius: 12px;
-}
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+      object-fit: contain !important;
+      object-position: center !important;
+      border-radius: 12px;
+    }
   </style>
 </head>
 <body>
@@ -257,11 +260,14 @@
       <header class="brandbar">
         <div class="brand" aria-label="Posto Certo">
           <img class="brand-logo" src="marca-posto-certo.jpg" alt="Posto Certo">
-<span class="station-label">POINT CERTO </span>
+          <span class="station-label">POINT CERTO </span>
+        </div>
       </header>
 
       <section class="screen intro active" id="intro-screen" aria-labelledby="intro-title">
-        <div class="station-photo" role="img" aria-label="Fachada do Posto Certo à noite"></div>
+        <div class="station-photo">
+          <img src="foto-posto.jpg" alt="Fachada do Posto Certo à noite">
+        </div>
         <p class="eyebrow">Av. Dr. Nicanor Barreto, 1 - Vale Quem Tem, Teresina - PI, 64057-105</p>
         <h1 id="intro-title">Aperte o play e <em>estoure</em> a sorte.</h1>
         <p class="intro-copy">Escolha um balão e descubra o seu presente. É rápido, divertido e pode render uma pausa gostosa na sua viagem.</p>
@@ -304,12 +310,12 @@
     </section>
   </main>
   <audio id="win-sound" preload="auto">
-  <source src="premio.mp3" type="audio/mpeg">
-</audio>
+    <source src="premio.mp3" type="audio/mpeg">
+  </audio>
   
   <audio id="pop-sound" preload="auto">
     <source src="estouro.mp3" type="audio/mpeg">
-</audio>
+  </audio>
 
   <script>
     (() => {
@@ -338,33 +344,27 @@
       let alreadyPicked = false;
       const PRIZE_LOCK_KEY = 'posto-certo-7-premio-ganho';
       const LOCK_TIME = 5 * 60 * 1000; // 5 minutos
-let roundPrize = null;
+      let roundPrize = null;
 
-function applyPrizeLock() {
-  start.disabled = true;
-  start.innerHTML = 'Você já recebeu seu prêmio ✓';
-  start.style.opacity = '.65';
-  start.style.cursor = 'not-allowed';
+      function applyPrizeLock() {
+        start.disabled = true;
+        start.innerHTML = 'Você já recebeu seu prêmio ✓';
+        start.style.opacity = '.65';
+        start.style.cursor = 'not-allowed';
 
-  document.querySelector('.rules').textContent =
-    'Volte no seu próximo abastecimento acima de R$ 100 e tente a sorte novamente.';
-}
+        document.querySelector('.rules').textContent =
+          'Volte no seu próximo abastecimento acima de R$ 100 e tente a sorte novamente.';
+      }
 
-const saved = JSON.parse(localStorage.getItem(PRIZE_LOCK_KEY));
+      const saved = JSON.parse(localStorage.getItem(PRIZE_LOCK_KEY));
 
-if (saved) {
-
-    if (Date.now() < saved.expiresAt) {
-
-        applyPrizeLock();
-
-    } else {
-
-        localStorage.removeItem(PRIZE_LOCK_KEY);
-
-    }
-
-}
+      if (saved) {
+        if (Date.now() < saved.expiresAt) {
+          applyPrizeLock();
+        } else {
+          localStorage.removeItem(PRIZE_LOCK_KEY);
+        }
+      }
 
       function makeBalloons() {
         grid.innerHTML = '';
@@ -399,24 +399,24 @@ if (saved) {
         });
         selected.classList.add('pop');
         popSound.currentTime = 0;
-popSound.play().catch(() => {});
+        popSound.play().catch(() => {});
         if (navigator.vibrate) navigator.vibrate([35, 30, 65]);
         if (prize.win) {
-  setTimeout(() => {
-    winSound.currentTime = 0;
-    winSound.play().catch(() => {});
-}, 250);
-  releaseConfetti();
-}
+          setTimeout(() => {
+            winSound.currentTime = 0;
+            winSound.play().catch(() => {});
+          }, 250);
+          releaseConfetti();
+        }
         window.setTimeout(() => showResult(prize), 560);
       }
 
       function showResult(prize) {
         if (prize.win) {
-  localStorage.setItem(PRIZE_LOCK_KEY, JSON.stringify({
-    expiresAt: Date.now() + LOCK_TIME
-}));
-}
+          localStorage.setItem(PRIZE_LOCK_KEY, JSON.stringify({
+            expiresAt: Date.now() + LOCK_TIME
+          }));
+        }
         const title = document.getElementById('result-title');
         const copy = document.getElementById('result-copy');
         const name = document.getElementById('prize-name');
@@ -450,9 +450,9 @@ popSound.play().catch(() => {});
 
       function resetGame() {
         if (localStorage.getItem(PRIZE_LOCK_KEY)) {
-  applyPrizeLock();
-  return;
-}
+          applyPrizeLock();
+          return;
+        }
         layer.classList.remove('visible');
         card.classList.remove('lose');
         alreadyPicked = false;
@@ -463,13 +463,13 @@ popSound.play().catch(() => {});
 
       start.addEventListener('click', resetGame);
       restart.addEventListener('click', () => {
-  if (roundPrize?.win) {
-    window.location.reload();
-    return;
-  }
+        if (roundPrize?.win) {
+          window.location.reload();
+          return;
+        }
 
-  resetGame();
-});
+        resetGame();
+      });
       makeBalloons();
     })();
   </script>
